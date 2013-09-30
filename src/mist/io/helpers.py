@@ -208,6 +208,8 @@ def connect(request, backend_id=False):
                       datacenter=backend['region'])
     elif backend['provider'] == Provider.NEPHOSCALE:
         conn = driver(backend['apikey'], backend['apisecret'])
+    elif backend['provider'] == Provider.SOFTLAYER:
+        conn = driver(backend['apikey'], backend['apisecret'])
     else:
         # ec2
         conn = driver(backend['apikey'], backend['apisecret'])
