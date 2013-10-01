@@ -504,10 +504,15 @@ def create_machine(request):
         key = SSHKeyDeployment(str(public_key))
         deploy_script = ScriptDeployment(script)
         msd = MultiStepDeployment([key, deploy_script])
-        
-        import pdb; pdb.set_trace()
+        if '.' in machine_name:
+            domain = '.'.join(machine_name.split('.')[1:])
+            name=machine_name.split('.')[0]
+        else:
+            domain = None
+            name=machine_name
         try:
-            node = conn.deploy_node(name=machine_name,
+            node = conn.deploy_node(name=name,
+                             ex_domain=domain,
                              image=image,
                              size=size,
                              deploy=msd,
