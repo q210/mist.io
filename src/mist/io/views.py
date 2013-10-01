@@ -442,18 +442,16 @@ def create_machine(request):
                 associate_key(request, key_id, backend_id, node.id, deploy=False)
             except Exception as e:
                 return Response('Failed to create machine in EC2: %s' % e, 500)
-        #remove temp file with private key
-        try:
-            os.remove(tmp_key_path)
-        except:
-            pass
     elif conn.type is Provider.NEPHOSCALE and public_key:
         machine_name = machine_name[:64].replace(' ','-')
-        #name in NephoScale must start with a letter, can contain mixed alpha-numeric characters, 
-        #hyphen ('-') and underscore ('_') characters, cannot exceed 64 characters, and can end with a letter or a number."
+        #name in NephoScale must start with a letter, can contain mixed 
+        #alpha-numeric characters, hyphen ('-') and underscore ('_')
+        # characters, cannot exceed 64 characters, and can end with a 
+        #letter or a number."
 
-        #Hostname must start with a letter, can contain mixed alpha-numeric characters 
-        #and the hyphen ('-') character, cannot exceed 15 characters, and can end with a letter or a number.
+        #Hostname must start with a letter, can contain mixed alpha-numeric
+        # characters and the hyphen ('-') character, cannot exceed 15 characters,
+        # and can end with a letter or a number.
         key = str(public_key).replace('\n','')
         deploy_script = ScriptDeployment(script)        
         
@@ -498,11 +496,26 @@ def create_machine(request):
             associate_key(request, key_id, backend_id, node.id, deploy=False)
         except Exception as e:
             return Response('Failed to create machine in NephoScale: %s' % e, 500)
-        #remove temp file with private key
+    elif conn.type is Provider.SOFTLAYER and public_key:
+        (tmp_key, tmp_key_path) = tempfile.mkstemp()
+        key_fd = os.fdopen(tmp_key, 'w+b')
+        key_fd.write(private_key)
+        key_fd.close()
+        key = SSHKeyDeployment(str(public_key))
+        deploy_script = ScriptDeployment(script)
+        msd = MultiStepDeployment([key, deploy_script])
+        
+        import pdb; pdb.set_trace()
         try:
-            os.remove(tmp_key_path)
-        except:
-            pass            
+            node = conn.deploy_node(name=machine_name,
+                             image=image,
+                             size=size,
+                             deploy=msd,
+                             location=location,
+                             ssh_key=tmp_key_path)
+            associate_key(request, key_id, backend_id, node.id, deploy=False)
+        except Exception as e:
+            return Response('Failed to create machine in SoftLayer: %s' % e, 500)
     elif conn.type is Provider.LINODE and public_key and private_key:
         auth = NodeAuthSSHKey(public_key)
 
@@ -523,13 +536,14 @@ def create_machine(request):
             associate_key(request, key_id, backend_id, node.id, deploy=True)
         except Exception as e:
             return Response('Failed to create machine in Linode: %s' % e, 500)
-        #remove temp file with private key
-        try:
-            os.remove(tmp_key_path)
-        except:
-            pass
     else:
         return Response('Cannot create a machine without a keypair', 400)
+
+    #remove temp file with private key
+    try:
+        os.remove(tmp_key_path)
+    except:
+        pass
 
     return {'id': node.id,
             'name': node.name,
