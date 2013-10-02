@@ -86,6 +86,20 @@ SUPPORTED_PROVIDERS = [
                         'provider': Provider.OPENSTACK,
                        },
 
+                       # HP Cloud
+                       {'title': 'HPCloud US West AZ1',
+                        'provider': Provider.OPENSTACK,
+                        'provider': "%s:%s" % (Provider.OPENSTACK,'az-1.region-a.geo-1')
+                       },
+                       {'title': 'HPCloud US West AZ2',
+                        'provider': Provider.OPENSTACK,
+                        'provider': "%s:%s" % (Provider.OPENSTACK,'az-2.region-a.geo-1')
+                       },
+                       {'title': 'HPCloud US West AZ3',
+                        'provider': Provider.OPENSTACK,
+                        'provider': "%s:%s" % (Provider.OPENSTACK,'az-3.region-a.geo-1')
+                       },
+
                        # Rackspace
                        {'title': 'Rackspace DFW',
                         'provider': "%s:%s" % (Provider.RACKSPACE,'dfw')

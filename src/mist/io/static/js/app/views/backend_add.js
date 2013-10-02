@@ -106,7 +106,7 @@ define('app/views/backend_add', [
                     "provider": Mist.backendAddController.newBackendProvider.provider,
                     "apikey" : Mist.backendAddController.newBackendKey,
                     "apisecret": Mist.backendAddController.newBackendSecret,
-                    "apiurl": Mist.backendAddController.newBackendUrl,
+                    "apiurl": Mist.backendAddController.newBackendURL,
                     "tenant_name": Mist.backendAddController.newBackendTenant
                 };
                 $.ajax({
