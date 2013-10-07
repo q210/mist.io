@@ -171,6 +171,12 @@ define('app/views/machine_add_dialog', [
                           }
                     }                                         
                 } 
+                if (providerName == 'SoftLayer') {
+                    if ((machineName.length > 253)||(machineName.indexOf(' ') >= 0)) {
+                        Mist.notificationController.timeNotify("Server name must be an alphanumeric string, that may contain period ('.') and dash ('-') special characters.", 7000);
+                        return false;
+                    }
+                }              
                 Mist.machineAddController.newMachine();
                 $('.dialog-add').panel('close');
                 Mist.Router.router.transitionTo('machines');
