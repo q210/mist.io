@@ -1387,9 +1387,22 @@ iframe#hidden-shell-iframe {
     text-align: right;
 }
 
+
+.grav-btn span.ui-btn-inner {
+    padding: 0;
+    height: 30px;
+    width: auto;
+}
+
+.ui-header .grav-btn {
+    margin-right: 10px;
+}
+
 img.gravatar-image {
     float: left;
     margin: 5px;
+    width: 20px;
+    height: auto;
 }
 
 div.userEmail {

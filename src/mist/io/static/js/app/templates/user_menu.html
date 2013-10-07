@@ -1,11 +1,15 @@
-<button
+
+<a
     id="me-btn"
-    class="ui-btn-right"
-    data-role="button"
+    class="grav-btn ui-btn-right"
+    data-shadow="false"
+    data-iconshadow="false"
+    data-corners="false"
+    data-mini="true"
     {{bindAttr class="Mist.backendsController.state :state-providers"}}
     {{action click target="view"}}>
         <img class="gravatar-image" {{bindAttr src="view.gravatarURL"}}/>    
-</button>
+</a>
 
 <div id="user-dialog" class="mist-dialog" data-role="popup" data-transition="pop" data-position-to="#me-btn">
     <div data-role="content" data-theme="b">
