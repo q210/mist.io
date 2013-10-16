@@ -154,21 +154,21 @@ define('app/controllers/rules', [
                     $('.rule-button.metric').each(function(i, el){
                         $(el).button();
                     });
-                    $('.rule-metric-popup').each(function(i, el){
-                        $(el).popup();
-                    });
-                    $('.rule-metric-list').each(function(i, el){
-                        $(el).listview();
-                    });
+                    //$('.rule-metric-popup').each(function(i, el){
+                    //    $(el).popup();
+                    //});
+                    //$('.rule-metric-list').each(function(i, el){
+                    //    $(el).listview();
+                    //});
                     $('.rule-button.operator').each(function(i, el){
                         $(el).button();
                     });
-                    $('.rule-operator-popup').each(function(i, el){
-                        $(el).popup();
-                    });
-                    $('.rule-operator-list').each(function(i, el){
-                        $(el).listview();
-                    });
+                    //$('.rule-operator-popup').each(function(i, el){
+                    //    $(el).popup();
+                    //});
+                    //$('.rule-operator-list').each(function(i, el){
+                    //    $(el).listview();
+                    //});
                     $('.rule-value').each(function(i, el){
                         $(el).slider();
                     });
@@ -178,21 +178,21 @@ define('app/controllers/rules', [
                     $('.rule-button.action').each(function(i, el){
                         $(el).button();
                     });
-                    $('.rule-action-popup').each(function(i, el){
-                        $(el).popup();
-                    });
+                    //$('.rule-action-popup').each(function(i, el){
+                    //    $(el).popup();
+                    //});
                     $('.rule-command-content').each(function(i, el){
                         $(el).textinput();
                     });
                     $('.rule-command-popup a').each(function(i, el){
                         $(el).button();
                     });
-                    $('.rule-command-popup').each(function(i, el){
-                        $(el).popup();
-                    });
-                    $('.rule-action-list').each(function(i, el){
-                        $(el).listview();
-                    });
+                    //$('.rule-command-popup').each(function(i, el){
+                    //    $(el).popup();
+                    //});
+                    //$('.rule-action-list').each(function(i, el){
+                    //    $(el).listview();
+                    //});
                     $('.rules-container .delete-rule-button').each(function(i, el){
                         $(el).button();
                     });
@@ -214,7 +214,7 @@ define('app/controllers/rules', [
                                 var payload = {
                                     'id' : rule.id,
                                     'value' : rule_value
-                                }
+                                };
                                 $('#' + rule.id + ' .delete-rule-container').hide();
                                 $('#' + rule.id + ' .ajax-loader').show();
                                 $.ajax({

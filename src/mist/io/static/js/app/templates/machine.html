@@ -80,38 +80,7 @@
             <div class="rules-container">
                 {{#each view.rules}}
                     {{view Mist.RuleView ruleBinding="this"}}
-                {{/each}}
-
-                <div class="rule-metric-popup" data-role="popup" data-position-to="origin">
-                    <ul class="rule-metric-list" data-role="listview">
-                        {{#each Mist.rulesController.metricList}}
-                        <li data-icon="false">
-                            <a href="#" title="{{unbound this}}">{{this}}</a>
-                        </li>
-                        {{/each}}
-                    </ul>
-                </div>
-                <div class="rule-operator-popup" data-role="popup">
-                    <ul class="rule-operator-list" data-role="listview">
-                        {{#each Mist.rulesController.operatorList}}
-                        <li data-icon="false">
-                            <a href="#" title="{{unbound this.title}}">{{this.symbol}}</a>
-                        </li>
-                        {{/each}}
-                    </ul>
-                </div>
-                <div class="rule-action-popup" data-role="popup">
-                    <ul class="rule-action-list" data-role="listview">
-                        {{#each Mist.rulesController.actionList}}
-                        <li data-icon="false">
-                            <a href="#" title="{{unbound this}}">{{this}}</a>
-                        </li>
-                        {{/each}}
-                        <li data-icon="false" class="ui-disabled">
-                            <a href="#" title="launch">launch</a>
-                        </li>
-                    </ul>
-                </div>                
+                {{/each}}              
             </div>
             
             <div class="add-rule-container">
@@ -221,6 +190,37 @@
     <div class="bottom-padding"></div>
 
 </div>
+
+<div class="rule-metric-popup" data-role="popup">
+    <ul class="rule-metric-list" data-role="listview">
+        {{#each Mist.rulesController.metricList}}
+        <li data-icon="false">
+            <a href="#" title="{{unbound this}}">{{this}}</a>
+        </li>
+        {{/each}}
+    </ul>
+</div>
+<div class="rule-operator-popup" data-role="popup">
+    <ul class="rule-operator-list" data-role="listview">
+        {{#each Mist.rulesController.operatorList}}
+        <li data-icon="false">
+            <a href="#" title="{{unbound this.title}}">{{this.symbol}}</a>
+        </li>
+        {{/each}}
+    </ul>
+</div>
+<div class="rule-action-popup" data-role="popup">
+    <ul class="rule-action-list" data-role="listview">
+        {{#each Mist.rulesController.actionList}}
+        <li data-icon="false">
+            <a href="#" title="{{unbound this}}">{{this}}</a>
+        </li>
+        {{/each}}
+        <li data-icon="false" class="ui-disabled">
+            <a href="#" title="launch">launch</a>
+        </li>
+    </ul>
+</div>  
 
 {{view Mist.MachineManageKeysView}}
 
