@@ -147,59 +147,72 @@ define('app/controllers/rules', [
                     }
                 });
             },
-            
+
+            renewRule: function(event) {
+                var that = this;
+                if (($(event.currentTarget).attr('id') != 'new') && ($(event.currentTarget).attr('id'))) {
+                    var rule_id = $(event.currentTarget).attr('id');
+                    var rule_value = $(event.currentTarget).find('.ui-slider-handle').attr('aria-valuenow');
+                    var rule = that.getRuleById(rule_id);
+                    if (rule.value != rule_value) {
+                        var payload = {
+                            'id' : rule.id,
+                            'value' : rule_value
+                        };
+                        $('#' + rule.id + ' .delete-rule-container').hide();
+                        $('#' + rule.id + ' .ajax-loader').show();
+                        $.ajax({
+                            url: 'rules',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(payload),
+                            success: function(data) {
+                                info('Successfully updated rule ', rule.id);
+                                rule.set('value', rule_value);
+                                $('#' + rule.id + ' .ajax-loader').hide();
+                                $('#' + rule.id + ' .delete-rule-container').show();
+                            },
+                            error: function(jqXHR, textstate, errorThrown) {
+                                Mist.notificationController.notify('Error while updating rule');
+                                error(textstate, errorThrown, 'while updating rule');
+                                $('#' + rule.id + ' .ajax-loader').hide();
+                                $('#' + rule.id + ' .delete-rule-container').show();
+                            }
+                        });
+                    }
+                }
+            },
+
+            handleRuleSliders: function() {
+                var that = this;
+                function sliderShowHandler(event) {
+                    $(event.currentTarget).addClass('open');
+                    $(event.currentTarget).find('.ui-slider-track').fadeIn(200);
+                }
+                function sliderHideHandler(event) {
+                    $(event.currentTarget).find('.ui-slider').removeClass('open');
+                    $(event.currentTarget).find('.ui-slider-track').fadeOut(200);
+                    that.renewRule(event);
+                }
+                $('.ui-slider').on('tap', sliderShowHandler);
+                $('.ui-slider').on('click', sliderShowHandler);
+                $('.ui-slider').on('mouseover', sliderShowHandler);
+                $('#single-machine').on('tap', sliderHideHandler);
+                $('.rule-box').on('mouseleave', sliderHideHandler);
+            },
+
+            unhandleRuleSliders: function() {
+                $('.ui-slider').off('tap');
+                $('.ui-slider').off('click');
+                $('.ui-slider').off('mouseover');
+            },
+
             redrawRules: function() {
                 var that = this;
                 Ember.run.next(function() {
+                    that.unhandleRuleSliders();
                     $('.rule-box').trigger('create');
-                    function showRuleSlider(event) {
-                        $(event.currentTarget).find('.ui-slider-track').fadeIn(200);
-                        $(event.currentTarget).addClass('open');
-                    }
-
-                    function hideRuleSlider(event){
-                        $(event.currentTarget).find('.ui-slider').removeClass('open');
-                        $(event.currentTarget).find('.ui-slider-track').fadeOut(200);
-
-                        if (($(event.currentTarget).attr('id') != 'new') && ($(event.currentTarget).attr('id'))) {
-                            var rule_id = $(event.currentTarget).attr('id');
-                            var rule_value = $(event.currentTarget).find('.ui-slider-handle').attr('aria-valuenow');
-                            var rule = that.getRuleById(rule_id);
-                            if (rule.value != rule_value) {
-                                var payload = {
-                                    'id' : rule.id,
-                                    'value' : rule_value
-                                };
-                                $('#' + rule.id + ' .delete-rule-container').hide();
-                                $('#' + rule.id + ' .ajax-loader').show();
-                                $.ajax({
-                                    url: 'rules',
-                                    type: 'POST',
-                                    contentType: 'application/json',
-                                    data: JSON.stringify(payload),
-                                    success: function(data) {
-                                        info('Successfully updated rule ', rule.id);
-                                        rule.set('value', rule_value);
-                                        $('#' + rule.id + ' .ajax-loader').hide();
-                                        $('#' + rule.id + ' .delete-rule-container').show();
-                                    },
-                                    error: function(jqXHR, textstate, errorThrown) {
-                                        Mist.notificationController.notify('Error while updating rule');
-                                        error(textstate, errorThrown, 'while updating rule');
-                                        $('#' + rule.id + ' .ajax-loader').hide();
-                                        $('#' + rule.id + ' .delete-rule-container').show();
-                                    }
-                                });
-                            }
-                        }
-                    }
-
-                    $('.ui-slider').off('mouseover');
-                    $('.ui-slider').on('mouseover', showRuleSlider);
-                    $('.ui-slider').on('click', showRuleSlider);
-                    $('.ui-slider').on('tap', showRuleSlider);
-                    $('.rule-box').on('mouseleave', hideRuleSlider);
-                    $('#single-machine').on('tap', hideRuleSlider);
+                    that.handleRuleSliders();
                 });
             },
         });
