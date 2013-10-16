@@ -65,19 +65,19 @@ define('app/controllers/rules', [
                 rule.set('id', 'new');
                 that.pushObject(rule);
                 that.redrawRules();
-                setTimeout(function() {
-                        $('#new .delete-rule-container').hide();
-                        $('#new .ajax-loader').show();
-                    }, 100)
+                Ember.run.later(function() {
+                    $('#new .delete-rule-container').hide();
+                    $('#new .ajax-loader').show();
+                }, 100);
 
-                payload = {
+                var payload = {
                     'backendId': machine.backend.id,
                     'machineId': machine.id,
                     'metric': metric,
                     'operator': operator.title,
                     'value': value,
                     'action': actionToTake
-                }
+                };
                 $('#add-rule-button').button('disable');
                 $('#add-rule-button').button('refresh');
                 $.ajax({
@@ -128,7 +128,7 @@ define('app/controllers/rules', [
                     'id' : this.commandRule.id,
                     'action' : 'command',
                     'command': this.command
-                }
+                };
                 var that = this;
                 $.ajax({
                     url: 'rules',
@@ -151,51 +151,7 @@ define('app/controllers/rules', [
             redrawRules: function(){
                 var that = this;
                 Ember.run.next(function() {
-                    $('.rule-button.metric').each(function(i, el){
-                        $(el).button();
-                    });
-                    //$('.rule-metric-popup').each(function(i, el){
-                    //    $(el).popup();
-                    //});
-                    //$('.rule-metric-list').each(function(i, el){
-                    //    $(el).listview();
-                    //});
-                    $('.rule-button.operator').each(function(i, el){
-                        $(el).button();
-                    });
-                    //$('.rule-operator-popup').each(function(i, el){
-                    //    $(el).popup();
-                    //});
-                    //$('.rule-operator-list').each(function(i, el){
-                    //    $(el).listview();
-                    //});
-                    $('.rule-value').each(function(i, el){
-                        $(el).slider();
-                    });
-                    $('input.rule-value').each(function(i, el){
-                        $(el).textinput();
-                    });
-                    $('.rule-button.action').each(function(i, el){
-                        $(el).button();
-                    });
-                    //$('.rule-action-popup').each(function(i, el){
-                    //    $(el).popup();
-                    //});
-                    $('.rule-command-content').each(function(i, el){
-                        $(el).textinput();
-                    });
-                    $('.rule-command-popup a').each(function(i, el){
-                        $(el).button();
-                    });
-                    //$('.rule-command-popup').each(function(i, el){
-                    //    $(el).popup();
-                    //});
-                    //$('.rule-action-list').each(function(i, el){
-                    //    $(el).listview();
-                    //});
-                    $('.rules-container .delete-rule-button').each(function(i, el){
-                        $(el).button();
-                    });
+                    $('.rule-box').trigger('create');
 
                     function showRuleSlider(event) {
                         $(event.currentTarget).find('.ui-slider-track').css('width', $(window).width()*0.3);
