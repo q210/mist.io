@@ -196,9 +196,8 @@ define('app/views/rule', [
             },
 
             deleteRuleClicked: function(){
+                this.rule.set('pendingAction', true);
                 var that = this;
-                $('#' + that.rule.id + ' .delete-rule-container').fadeOut(200);
-                $('#' + that.rule.id + ' .ajax-loader').fadeIn(200);
                 $.ajax({
                     url: 'rules/' + that.rule.id,
                     type: 'DELETE',
@@ -207,14 +206,15 @@ define('app/views/rule', [
                         info('Successfully deleted rule ', that.rule.id);
                         Mist.rulesController.removeObject(that.rule);
                         Mist.rulesController.redrawRules();
-                        $('#' + that.rule.id + ' .ajax-loader').hide();
-                        $('#' + that.rule.id + ' .delete-rule-container').show();
+                        that.rule.set('pendingAction', false);
                     },
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while deleting rule');
                         error(textstate, errorThrown, 'while deleting rule');
-                        $('#' + that.rule.id + ' .ajax-loader').hide();
-                        $('#' + that.rule.id + ' .delete-rule-container').show();
+                        that.rule.set('pendingAction', false);
+                        Ember.run.next(function() {
+                            $('.delete-rule-container').trigger('create');
+                        });
                     }
                 });
 

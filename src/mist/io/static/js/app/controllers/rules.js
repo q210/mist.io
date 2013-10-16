@@ -35,17 +35,18 @@ define('app/controllers/rules', [
                 'command'
             ],
 
-            getRuleById: function(ruleId){
-                for (var i = 0; i < this.content.length; i++){
+            getRuleById: function(ruleId) {
+                for (var i = 0; i < this.content.length; i++) {
                     if (this.content[i].id == ruleId) {
                         return this.content[i];
                     }
                 }
+                return null;
             },
             
-            getOperatorByTitle: function(title){
+            getOperatorByTitle: function(title) {
                 var ret = null;
-                this.operatorList.forEach(function(op){
+                this.operatorList.forEach(function(op) {
                     if (op.title == title){
                         ret = op;
                     }
@@ -55,20 +56,17 @@ define('app/controllers/rules', [
 
             newRule: function(machine, metric, operator, value, actionToTake) {
                 var rule = Rule.create({
+                    'id': 'new',
                     'machine': machine,
                     'metric': metric,
                     'operator': operator,
                     'value': value,
-                    'actionToTake': actionToTake
+                    'actionToTake': actionToTake,
+                    'pendingAction': true
                 });
-                var that = this;
-                rule.set('id', 'new');
-                that.pushObject(rule);
-                that.redrawRules();
-                Ember.run.later(function() {
-                    $('#new .delete-rule-container').hide();
-                    $('#new .ajax-loader').show();
-                }, 100);
+                
+                this.pushObject(rule);
+                this.redrawRules();
 
                 var payload = {
                     'backendId': machine.backend.id,
@@ -79,21 +77,22 @@ define('app/controllers/rules', [
                     'action': actionToTake
                 };
                 $('#add-rule-button').button('disable');
-                $('#add-rule-button').button('refresh');
+                var that = this;
                 $.ajax({
                     url: 'rules',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(payload),
                     success: function(data) {
-                        info('Successfully created rule ', data['id']);
-                        rule.set('id', data['id']);
-                        $('#new').attr('id', data['id']);
-                        $('.rule-box').last().find('.delete-rule-container').show();
-                        $('.rule-box').last().find('.ajax-loader').hide();
+                        info('Successfully created rule ', data.id);
+                        rule.set('id', data.id);
+                        rule.set('pendingAction', false);
+                        rule.set('maxValue', data.max_value);
+                        $('#new').attr('id', data.id);
                         $('#add-rule-button').button('enable');
-                        $('#add-rule-button').button('refresh');
-                        rule.set('maxValue', data['max_value']);
+                        Ember.run.next(function() {
+                            $('.delete-rule-container').trigger('create');
+                        });
                     },
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while creating rule');
@@ -101,12 +100,8 @@ define('app/controllers/rules', [
                         that.removeObject(rule);
                         that.redrawRules();
                         $('#add-rule-button').button('enable');
-                        $('#add-rule-button').button('refresh');
                     }
                 });
-
-                return rule.id;
-
             },
 
             saveCommand: function() {
@@ -150,17 +145,19 @@ define('app/controllers/rules', [
 
             renewRule: function(event) {
                 var that = this;
-                if (($(event.currentTarget).attr('id') != 'new') && ($(event.currentTarget).attr('id'))) {
-                    var rule_id = $(event.currentTarget).attr('id');
-                    var rule_value = $(event.currentTarget).find('.ui-slider-handle').attr('aria-valuenow');
+                var rule_id = $(event.currentTarget).attr('id');
+                
+                if ((rule_id != 'new') && rule_id) {
+                
                     var rule = that.getRuleById(rule_id);
+                    var rule_value = $(event.currentTarget).find('.ui-slider-handle').attr('aria-valuenow');
+
                     if (rule.value != rule_value) {
                         var payload = {
                             'id' : rule.id,
                             'value' : rule_value
                         };
-                        $('#' + rule.id + ' .delete-rule-container').hide();
-                        $('#' + rule.id + ' .ajax-loader').show();
+                        rule.set('pendingAction', true);
                         $.ajax({
                             url: 'rules',
                             type: 'POST',
@@ -168,15 +165,13 @@ define('app/controllers/rules', [
                             data: JSON.stringify(payload),
                             success: function(data) {
                                 info('Successfully updated rule ', rule.id);
+                                rule.set('pendingAction', false);
                                 rule.set('value', rule_value);
-                                $('#' + rule.id + ' .ajax-loader').hide();
-                                $('#' + rule.id + ' .delete-rule-container').show();
                             },
                             error: function(jqXHR, textstate, errorThrown) {
                                 Mist.notificationController.notify('Error while updating rule');
                                 error(textstate, errorThrown, 'while updating rule');
-                                $('#' + rule.id + ' .ajax-loader').hide();
-                                $('#' + rule.id + ' .delete-rule-container').show();
+                                rule.set('pendingAction', false);
                             }
                         });
                     }
