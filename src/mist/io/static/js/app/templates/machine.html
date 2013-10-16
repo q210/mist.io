@@ -117,22 +117,6 @@
             </div>
 
             {{/if}}
-            
-            <div class="mist-dialog rule-command-popup" data-role="popup" data-overlay-theme="a">
-                <div data-role="header">
-                    <h1>Command</h1>
-                </div>
-                <div data-role="content">
-                    {{view Ember.TextArea
-                        valueBinding="Mist.rulesController.command"
-                        name="rule-command-content"}}            
-                    <div data-role="controlgroup" class="btn-full ok-cancel" data-type="horizontal">
-                        <a data-role="button" data-theme="c" data-rel="back">Back</a>
-                        <a data-role="button" data-theme="b" {{action saveCommand target="Mist.rulesController"}}>Save</a>
-                    </div>
-                    <div class="ajax-loader"></div>
-                </div>
-            </div>            
 
         </div>
     </div>
@@ -220,6 +204,22 @@
             <a href="#" title="launch">launch</a>
         </li>
     </ul>
+</div>
+
+<div class="mist-dialog rule-command-popup" data-role="popup" data-overlay-theme="a">
+    <div data-role="header">
+        <h1>Command</h1>
+    </div>
+    <div data-role="content">
+        {{view Ember.TextArea
+            valueBinding="Mist.rulesController.command"
+            name="rule-command-content"}}            
+        <div data-role="controlgroup" class="btn-full ok-cancel" data-type="horizontal">
+            <a data-role="button" data-theme="c" data-rel="back">Back</a>
+            <a data-role="button" data-theme="b" {{action saveCommand target="Mist.rulesController"}}>Save</a>
+        </div>
+        <div class="ajax-loader"></div>
+    </div>
 </div>  
 
 {{view Mist.MachineManageKeysView}}

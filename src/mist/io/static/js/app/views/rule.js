@@ -45,8 +45,7 @@ define('app/views/rule', [
                     'value' : rule.value
                 };
 
-                $('#' + rule.id + ' .delete-rule-container').hide();
-                $('#' + rule.id + ' .ajax-loader').fadeIn(200);
+                rule.set('pendingAction', true);
                 $.ajax({
                     url: 'rules',
                     type: 'POST',
@@ -54,8 +53,7 @@ define('app/views/rule', [
                     data: JSON.stringify(payload),
                     success: function(data) {
                         info('Successfully updated rule ', rule.id);
-                        $('#' + rule.id + ' .ajax-loader').hide();
-                        $('#' + rule.id + ' .delete-rule-container').show();
+                        rule.set('pendingAction', false);
                         rule.set('maxValue', data['max_value']);
                         var maxvalue = parseInt(rule.maxValue);
                         var curvalue = parseInt(rule.value);
@@ -77,12 +75,11 @@ define('app/views/rule', [
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while updating rule');
                         error(textstate, errorThrown, 'while updating rule');
+                        rule.set('pendingAction', false);
                         rule.set('metric', oldmetric);
                         rule.set('value', oldvalue);
                         $('#' + rule.id + ' .rule-value').val(oldvalue);
                         $('#' + rule.id + ' .rule-value').slider('refresh');
-                        $('#' + rule.id + ' .ajax-loader').hide();
-                        $('#' + rule.id + ' .delete-rule-container').show();
                     }
                 });
                 return false;
@@ -113,8 +110,7 @@ define('app/views/rule', [
                     'id' : rule.id,
                     'operator' : operator.title
                 };
-                $('#' + rule.id + ' .delete-rule-container').hide();
-                $('#' + rule.id + ' .ajax-loader').fadeIn(200);
+                rule.set('pendingAction', true);
                 $.ajax({
                     url: 'rules',
                     type: 'POST',
@@ -122,15 +118,13 @@ define('app/views/rule', [
                     data: JSON.stringify(payload),
                     success: function(data) {
                         info('Successfully updated rule ', rule.id);
-                        $('#' + rule.id + ' .ajax-loader').hide();
-                        $('#' + rule.id + ' .delete-rule-container').show();
+                        rule.set('pendingAction', false);
                     },
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while updating rule');
                         error(textstate, errorThrown, 'while updating rule');
+                        rule.set('pendingAction', false);
                         rule.set('operator', oldoperator);
-                        $('#' + rule.id + ' .ajax-loader').hide();
-                        $('#' + rule.id + ' .delete-rule-container').show();
                     }
                 });
                 return false;
@@ -153,27 +147,21 @@ define('app/views/rule', [
                 if (action == 'command') {
                     Mist.rulesController.set('commandRule', rule);
                     Mist.rulesController.set('command', rule.command);
-                    $('.rule-command-popup').popup({
-                        beforeposition: function( event, ui ) {
-                            $('.rule-command-popup').css('width',0.7*$(window).width());
-                        }
-                    }).popup('option', 'positionTo', '#' + rule.id + ' .rule-button.command').popup('open');
+                    $('.rule-command-popup textarea').val(rule.command);
+                    $('.rule-command-popup').css('width', 0.7 * $(window).width());
+                    $('.rule-command-popup').popup('open');
                     return false;
                 };
 
-                // if the same action is selected again don't do anything
                 if (action == oldAction) {
                     return false;
                 }
-
-                rule.set('actionToTake', action);
-
+                
                 var payload = {
                     'id' : rule.id,
                     'action' : action
                 };
-                $('#' + rule.id + ' .delete-rule-container').hide();
-                $('#' + rule.id + ' .ajax-loader').fadeIn(200);
+                rule.set('pendingAction', true);
                 $.ajax({
                     url: 'rules',
                     type: 'POST',
@@ -181,15 +169,13 @@ define('app/views/rule', [
                     data: JSON.stringify(payload),
                     success: function(data) {
                         info('Successfully updated rule ', rule.id);
-                        $('#' + rule.id + ' .ajax-loader').hide();
-                        $('#' + rule.id + ' .delete-rule-container').show();
+                        rule.set('pendingAction', false);
+                        rule.set('actionToTake', action);
                     },
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while updating rule');
                         error(textstate, errorThrown, 'while updating rule');
-                        rule.set('actionToTake', oldAction);
-                        $('#' + rule.id + ' .ajax-loader').hide();
-                        $('#' + rule.id + ' .delete-rule-container').show();
+                        rule.set('pendingAction', false);
                     }
                 });
                 return false;
@@ -212,12 +198,8 @@ define('app/views/rule', [
                         Mist.notificationController.notify('Error while deleting rule');
                         error(textstate, errorThrown, 'while deleting rule');
                         that.rule.set('pendingAction', false);
-                        Ember.run.next(function() {
-                            $('.delete-rule-container').trigger('create');
-                        });
                     }
                 });
-
             }
         });
     }

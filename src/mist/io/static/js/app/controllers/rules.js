@@ -54,6 +54,12 @@ define('app/controllers/rules', [
                 return ret;
             },
 
+            pendingActionObserver: function() {
+                Ember.run.next(function() {
+                    $('.delete-rule-container').trigger('create');
+                });
+            }.observes('this.content.@each.pendingAction'),
+
             newRule: function(machine, metric, operator, value, actionToTake) {
                 var rule = Rule.create({
                     'id': 'new',
@@ -67,7 +73,7 @@ define('app/controllers/rules', [
                 
                 this.pushObject(rule);
                 this.redrawRules();
-
+                
                 var payload = {
                     'backendId': machine.backend.id,
                     'machineId': machine.id,
@@ -90,9 +96,6 @@ define('app/controllers/rules', [
                         rule.set('maxValue', data.max_value);
                         $('#new').attr('id', data.id);
                         $('#add-rule-button').button('enable');
-                        Ember.run.next(function() {
-                            $('.delete-rule-container').trigger('create');
-                        });
                     },
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while creating rule');
@@ -105,25 +108,20 @@ define('app/controllers/rules', [
             },
 
             saveCommand: function() {
-                var oldAction = this.commandRule.get('actionToTake');
-                var oldCommand = this.commandRule.get('command');
-
                 $('.rule-command-popup').popup('close');
-
+                
+                var oldCommand = this.commandRule.get('command');
                 if (this.command == oldCommand) {
-                    return false;
+                    if (this.commandRule.get('actionToTake') == 'command') {
+                        return;
+                    }
                 }
-                
-                warn('setting command for '+ this.commandRule.id + ' to ' + this.command);
-                
-                this.commandRule.set('actionToTake', 'command');
-                this.commandRule.set('command', this.command);
-
                 var payload = {
                     'id' : this.commandRule.id,
                     'action' : 'command',
                     'command': this.command
                 };
+                this.commandRule.set('pendingAction', true);
                 var that = this;
                 $.ajax({
                     url: 'rules',
@@ -132,13 +130,14 @@ define('app/controllers/rules', [
                     data: JSON.stringify(payload),
                     success: function(data) {
                         info('Successfully updated rule', that.commandRule.id);
+                        that.commandRule.set('pendingAction', false);
+                        that.commandRule.set('actionToTake', 'command');
+                        that.commandRule.set('command', that.command);
                     },
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while updating rule');
                         error(textstate, errorThrown, 'while updating rule');
-                        that.commandRule.set('actionToTake', oldAction);
-                        that.commandRule.set('command', oldCommand);
-                        that.command.set(oldCommand);
+                        that.commandRule.set('pendingAction', false);
                     }
                 });
             },
@@ -151,7 +150,7 @@ define('app/controllers/rules', [
                 
                     var rule = that.getRuleById(rule_id);
                     var rule_value = $(event.currentTarget).find('.ui-slider-handle').attr('aria-valuenow');
-
+                    
                     if (rule.value != rule_value) {
                         var payload = {
                             'id' : rule.id,
