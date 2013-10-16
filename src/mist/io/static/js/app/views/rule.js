@@ -43,7 +43,7 @@ define('app/views/rule', [
                     'id' : rule.id,
                     'metric' : metric,
                     'value' : rule.value
-                }
+                };
 
                 $('#' + rule.id + ' .delete-rule-container').hide();
                 $('#' + rule.id + ' .ajax-loader').fadeIn(200);
@@ -112,7 +112,7 @@ define('app/views/rule', [
                 var payload = {
                     'id' : rule.id,
                     'operator' : operator.title
-                }
+                };
                 $('#' + rule.id + ' .delete-rule-container').hide();
                 $('#' + rule.id + ' .ajax-loader').fadeIn(200);
                 $.ajax({
@@ -171,7 +171,7 @@ define('app/views/rule', [
                 var payload = {
                     'id' : rule.id,
                     'action' : action
-                }
+                };
                 $('#' + rule.id + ' .delete-rule-container').hide();
                 $('#' + rule.id + ' .ajax-loader').fadeIn(200);
                 $.ajax({
@@ -197,7 +197,7 @@ define('app/views/rule', [
 
             deleteRuleClicked: function(){
                 var that = this;
-                $('#' + that.rule.id + ' .delete-rule-container').hide();
+                $('#' + that.rule.id + ' .delete-rule-container').fadeOut(200);
                 $('#' + that.rule.id + ' .ajax-loader').fadeIn(200);
                 $.ajax({
                     url: 'rules/' + that.rule.id,

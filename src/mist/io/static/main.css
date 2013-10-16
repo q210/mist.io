@@ -897,6 +897,10 @@ div.loading-monitoring {
     height:40px;
 }
 
+.rule-then {
+    margin-left: 20px;
+}
+
 .rule-if, .rule-then, .rule-value {
     float: left;
     height: 24px;
@@ -908,6 +912,14 @@ div.loading-monitoring {
     width: auto;
 }
 
+.rule-box .ui-slider.open {
+    width: 40%;
+}
+
+.rule-box div.ui-slider-track {
+    width: 80%;
+}
+
 .rule-box .rule-button {
     float: left;
 }
@@ -916,7 +928,7 @@ div.loading-monitoring {
     height: 32px;
     margin-top: -8px;
     margin-left: -8px;
-    margin-right: 20px;
+    margin-right: -8px;
 }
 
 .ui-slider-track {

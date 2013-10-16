@@ -148,19 +148,18 @@ define('app/controllers/rules', [
                 });
             },
             
-            redrawRules: function(){
+            redrawRules: function() {
                 var that = this;
                 Ember.run.next(function() {
                     $('.rule-box').trigger('create');
-
                     function showRuleSlider(event) {
-                        $(event.currentTarget).find('.ui-slider-track').css('width', $(window).width()*0.3);
-                        $(event.currentTarget).find('.ui-slider-track').fadeIn(100);
+                        $(event.currentTarget).find('.ui-slider-track').fadeIn(200);
+                        $(event.currentTarget).addClass('open');
                     }
 
                     function hideRuleSlider(event){
-                        $(event.currentTarget).find('.ui-slider-track').css('width','');
-                        $(event.currentTarget).find('.ui-slider-track').fadeOut(100);
+                        $(event.currentTarget).find('.ui-slider').removeClass('open');
+                        $(event.currentTarget).find('.ui-slider-track').fadeOut(200);
 
                         if (($(event.currentTarget).attr('id') != 'new') && ($(event.currentTarget).attr('id'))) {
                             var rule_id = $(event.currentTarget).attr('id');
