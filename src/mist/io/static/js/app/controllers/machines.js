@@ -54,7 +54,16 @@ define('app/controllers/machines', [
                                     }
                                  });
                             }
-
+                            Mist.rulesController.content.forEach(function(rule) {
+                                if (!rule['machine']) {
+                                    if (rule['backend_id'] == that.backend.id  && rule['machine_id'] == machine.id) {
+                                        rule.set('machine', Mist.backendsController.getMachineById(backend_id, machine_id));
+                                        Ember.run.next(function() {
+                                             $('.rule-box').trigger('create');
+                                        });
+                                    }
+                                }
+                            });
                             if (machine.id == item.id || (machine.id == -1 && machine.name == item.name)) {
                                 found = true;
                                 // machine.set(item); //FIXME this does not change anything;
@@ -172,7 +181,6 @@ define('app/controllers/machines', [
                 item.id = -1;
 
                 var machine = Machine.create(item);
-                machine.keys.addObject(key);
                 
                 this.addObject(machine);
                 Ember.run.next(function(){
@@ -197,7 +205,7 @@ define('app/controllers/machines', [
                         machine.set("private_ips", data.private_ips);
                         machine.set("extra", data.extra);
                         that.backend.set('create_pending', false);
-                        var key_machines = key.machines;
+                        var key_machines = key.get('machines', new Array());
                         key_machines.push([machine.backend.id, machine.id]);
                         key.set('machines', key_machines);
                         machine.probe(key.name);
