@@ -106,6 +106,77 @@ define('app/controllers/rules', [
                     }
                 });
             },
+            
+            
+            updateRule: function(id, metric, operator, value, actionToTake, command) {
+                
+                rule = this.getRuleById(id);
+                
+                if (!rule) {
+                    return false;
+                }
+                
+                // Make sure parameters are not null
+                if (!value) { value = rule.value; }
+                if (!metric) { metric = rule.metric; }
+                if (!command) { command = rule.command; }
+                if (!operator) { operator = rule.operator; }
+                if (!actionToTake) { actionToTake = rule.actionToTake; }
+                
+                // Check if anything changed
+                if (value == rule.value &&
+                    metric == rule.metric &&
+                    command == rule.command &&
+                    actionToTake == rule.actionToTake &&
+                    operator.title == rule.operator.title ) {
+                        return false;
+                }
+                
+                // Fix value on metric change
+                if ((metric != 'network-tx') || (metric != 'disk-write')) {
+                    if (value > 100) {
+                        value = 100;
+                    }
+                }
+                
+                var payload = {
+                    'id': id,
+                    'value': value,
+                    'metric': metric,
+                    'command': command,
+                    'operator': operator.title,
+                    'action': actionToTake,
+                };
+                
+                rule.set('pendingAction', true);
+                $.ajax({
+                    url: 'rules',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function(data) {
+                        info('Successfully updated rule ', id);
+                        rule.set('pendingAction', false);
+                        rule.set('value', value);
+                        rule.set('metric', metric);
+                        rule.set('command', command);
+                        rule.set('operator', operator);
+                        rule.set('action', actionToTake);
+                        rule.set('maxValue', data.max_value);
+                        
+                        var maxvalue = parseInt(rule.maxValue);
+                        var curvalue = parseInt(rule.value);
+                        if (curvalue > maxvalue) {
+                            rule.set('value', maxvalue);
+                        }
+                    },
+                    error: function(jqXHR, textstate, errorThrown) {
+                        Mist.notificationController.notify('Error while updating rule');
+                        error(textstate, errorThrown, 'while updating rule');
+                        rule.set('pendingAction', false);
+                    }
+                });
+            },
 
             saveCommand: function() {
                 $('.rule-command-popup').popup('close');
@@ -142,51 +213,22 @@ define('app/controllers/rules', [
                 });
             },
 
-            renewRule: function(event) {
-                var that = this;
+            changeRuleValue: function(event) {
                 var rule_id = $(event.currentTarget).attr('id');
-                
-                if ((rule_id != 'new') && rule_id) {
-                
-                    var rule = that.getRuleById(rule_id);
-                    var rule_value = $(event.currentTarget).find('.ui-slider-handle').attr('aria-valuenow');
-                    
-                    if (rule.value != rule_value) {
-                        var payload = {
-                            'id' : rule.id,
-                            'value' : rule_value
-                        };
-                        rule.set('pendingAction', true);
-                        $.ajax({
-                            url: 'rules',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(payload),
-                            success: function(data) {
-                                info('Successfully updated rule ', rule.id);
-                                rule.set('pendingAction', false);
-                                rule.set('value', rule_value);
-                            },
-                            error: function(jqXHR, textstate, errorThrown) {
-                                Mist.notificationController.notify('Error while updating rule');
-                                error(textstate, errorThrown, 'while updating rule');
-                                rule.set('pendingAction', false);
-                            }
-                        });
-                    }
-                }
+                var rule_value = $(event.currentTarget).find('.ui-slider-handle').attr('aria-valuenow');
+                this.updateRule(rule_id, null, null, rule_value);
             },
 
             handleRuleSliders: function() {
                 var that = this;
                 function sliderShowHandler(event) {
                     $(event.currentTarget).addClass('open');
-                    $(event.currentTarget).find('.ui-slider-track').fadeIn(200);
+                    $(event.currentTarget).find('.ui-slider-track').fadeIn(50);
                 }
                 function sliderHideHandler(event) {
+                    $(event.currentTarget).find('.ui-slider-track').fadeOut(50);
                     $(event.currentTarget).find('.ui-slider').removeClass('open');
-                    $(event.currentTarget).find('.ui-slider-track').fadeOut(200);
-                    that.renewRule(event);
+                    that.changeRuleValue(event);
                 }
                 $('.ui-slider').on('tap', sliderShowHandler);
                 $('.ui-slider').on('click', sliderShowHandler);
