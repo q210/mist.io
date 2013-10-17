@@ -161,7 +161,7 @@ define('app/controllers/rules', [
                         rule.set('metric', metric);
                         rule.set('command', command);
                         rule.set('operator', operator);
-                        rule.set('action', actionToTake);
+                        rule.set('actionToTake', actionToTake);
                         rule.set('maxValue', data.max_value);
                         
                         var maxvalue = parseInt(rule.maxValue);
@@ -180,37 +180,14 @@ define('app/controllers/rules', [
 
             saveCommand: function() {
                 $('.rule-command-popup').popup('close');
-                
+                // Check if command did not actually change
                 var oldCommand = this.commandRule.get('command');
                 if (this.command == oldCommand) {
                     if (this.commandRule.get('actionToTake') == 'command') {
                         return;
                     }
                 }
-                var payload = {
-                    'id' : this.commandRule.id,
-                    'action' : 'command',
-                    'command': this.command
-                };
-                this.commandRule.set('pendingAction', true);
-                var that = this;
-                $.ajax({
-                    url: 'rules',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    success: function(data) {
-                        info('Successfully updated rule', that.commandRule.id);
-                        that.commandRule.set('pendingAction', false);
-                        that.commandRule.set('actionToTake', 'command');
-                        that.commandRule.set('command', that.command);
-                    },
-                    error: function(jqXHR, textstate, errorThrown) {
-                        Mist.notificationController.notify('Error while updating rule');
-                        error(textstate, errorThrown, 'while updating rule');
-                        that.commandRule.set('pendingAction', false);
-                    }
-                });
+                this.updateRule(this.commandRule.id, null, null, null, 'command', this.command);
             },
 
             changeRuleValue: function(event) {
@@ -220,7 +197,6 @@ define('app/controllers/rules', [
             },
 
             handleRuleSliders: function() {
-                var that = this;
                 function sliderShowHandler(event) {
                     $(event.currentTarget).addClass('open');
                     $(event.currentTarget).find('.ui-slider-track').fadeIn(50);
@@ -228,7 +204,7 @@ define('app/controllers/rules', [
                 function sliderHideHandler(event) {
                     $(event.currentTarget).find('.ui-slider-track').fadeOut(50);
                     $(event.currentTarget).find('.ui-slider').removeClass('open');
-                    that.changeRuleValue(event);
+                    Mist.rulesController.changeRuleValue(event);
                 }
                 $('.ui-slider').on('tap', sliderShowHandler);
                 $('.ui-slider').on('click', sliderShowHandler);
