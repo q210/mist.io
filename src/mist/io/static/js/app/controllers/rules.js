@@ -110,7 +110,7 @@ define('app/controllers/rules', [
             
             updateRule: function(id, metric, operator, value, actionToTake, command) {
                 
-                rule = this.getRuleById(id);
+                var rule = this.getRuleById(id);
                 
                 if (!rule) {
                     return false;
@@ -241,6 +241,8 @@ define('app/controllers/rules', [
                 $('.ui-slider').off('tap');
                 $('.ui-slider').off('click');
                 $('.ui-slider').off('mouseover');
+                $('#single-machine').off('tap');
+                $('.rule-box').off('mouseleave');
             },
 
             redrawRules: function() {
