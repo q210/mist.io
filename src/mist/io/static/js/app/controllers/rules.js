@@ -192,10 +192,10 @@ define('app/controllers/rules', [
             handleRuleSliders: function() {
                 function sliderShowHandler(event) {
                     $(event.currentTarget).addClass('open');
-                    $(event.currentTarget).find('.ui-slider-track').fadeIn(50);
+                    $(event.currentTarget).find('.ui-slider-track').fadeIn();
                 }
                 function sliderHideHandler(event) {
-                    $(event.currentTarget).find('.ui-slider-track').fadeOut(50);
+                    $(event.currentTarget).find('.ui-slider-track').fadeOut();
                     $(event.currentTarget).find('.ui-slider').removeClass('open');
                     Mist.rulesController.changeRuleValue(event);
                 }
