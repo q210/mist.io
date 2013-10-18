@@ -162,7 +162,6 @@ define('app/controllers/backends', [
                             rule.machine = that.getMachineById(rules[ruleId].backend, rules[ruleId].machine);
                             
                             if (!rule.machine) {
-                                // Mist hasn't loaded this machine yet
                                 rule.backend_id = rules[ruleId].backend;
                                 rule.machine_id = rules[ruleId].machine;
                             }
