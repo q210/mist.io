@@ -298,10 +298,9 @@ def get_machine_actions(machine, backend):
 
     if backend.type == Provider.NEPHOSCALE:
         can_stop = True
-        can_tag = False
 
-    if backend.type == Provider.RACKSPACE_FIRST_GEN or \
-                       backend.type == Provider.LINODE:
+    if backend.type in (Provider.RACKSPACE_FIRST_GEN, Provider.LINODE, 
+                        Provider.NEPHOSCALE, Provider.SOFTLAYER):
         can_tag = False
 
     # for other states
