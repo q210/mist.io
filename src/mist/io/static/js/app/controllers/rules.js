@@ -4,13 +4,13 @@ define('app/controllers/rules', [
     'jquery'
     ],
     /**
-     *
      * Rules controller
      *
      * @returns Class
      */
     function(Rule) {
         return Ember.ArrayController.extend({
+
             command: null,
             commandRule: null,
 
@@ -43,7 +43,7 @@ define('app/controllers/rules', [
                 }
                 return null;
             },
-            
+
             getOperatorByTitle: function(title) {
                 var ret = null;
                 this.operatorList.forEach(function(op) {
@@ -53,12 +53,6 @@ define('app/controllers/rules', [
                 });
                 return ret;
             },
-
-            pendingActionObserver: function() {
-                Ember.run.next(function() {
-                    $('.delete-rule-container').trigger('create');
-                });
-            }.observes('this.content.@each.pendingAction'),
 
             newRule: function(machine, metric, operator, value, actionToTake) {
                 var rule = Rule.create({
@@ -106,8 +100,7 @@ define('app/controllers/rules', [
                     }
                 });
             },
-            
-            
+
             updateRule: function(id, metric, operator, value, actionToTake, command) {
                 
                 var rule = this.getRuleById(id);

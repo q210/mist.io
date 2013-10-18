@@ -11,12 +11,12 @@ define('app/views/rule', [
         return Ember.View.extend({
 
             template: Ember.Handlebars.compile(rule_html),
-            
+
             valueObserver: function() {
                 $('#' + this.rule.id + ' .rule-value').val(this.rule.value);
                 $('#' + this.rule.id + ' .rule-value').slider('refresh');
             }.observes('this.rule.value'),
-            
+
             metricObserver: function() {
                 var metric = this.rule.metric;
                 if (metric == 'network-tx' || metric == 'disk-write') {
@@ -28,6 +28,12 @@ define('app/views/rule', [
                 }
             }.observes('this.rule.metric'),
 
+            pendingActionObserver: function() {
+                Ember.run.next(function() {
+                    $('.delete-rule-container').trigger('create');
+                });
+            }.observes('this.rule.pendingAction'),
+
             openMetricPopup: function() {
                 $('.rule-metric-popup').popup('option', 'positionTo', '#' + this.rule.id + ' .rule-button.metric').popup('open');
                 $('.rule-metric-popup li a').on('click', this.rule, this.selectMetric);
@@ -36,7 +42,6 @@ define('app/views/rule', [
             selectMetric: function(event) {
                 $('.rule-metric-popup').popup('close');
                 $('.rule-metric-popup li a').off('click');
-                warn(event.data.id);
                 Mist.rulesController.updateRule(event.data.id, this.title);
                 return false;
             },
