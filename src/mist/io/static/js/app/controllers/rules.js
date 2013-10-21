@@ -13,6 +13,7 @@ define('app/controllers/rules', [
 
             command: null,
             commandRule: null,
+            creationPending: false,
 
             metricList: [
                 'load',
@@ -53,20 +54,12 @@ define('app/controllers/rules', [
                 });
                 return ret;
             },
-
+            
+            creationPendingObserver: function() {
+                $('#add-rule-button').button(this.creationPending ? 'disable' : 'enable');
+            }.observes('creationPending'),
+            
             newRule: function(machine, metric, operator, value, actionToTake) {
-                var rule = Rule.create({
-                    'id': 'new',
-                    'machine': machine,
-                    'metric': metric,
-                    'operator': operator,
-                    'value': value,
-                    'actionToTake': actionToTake,
-                    'pendingAction': true
-                });
-                
-                this.pushObject(rule);
-                this.redrawRules();
                 
                 var payload = {
                     'backendId': machine.backend.id,
@@ -76,7 +69,8 @@ define('app/controllers/rules', [
                     'value': value,
                     'action': actionToTake
                 };
-                $('#add-rule-button').button('disable');
+                this.set('creationPending', true);
+                
                 var that = this;
                 $.ajax({
                     url: 'rules',
@@ -85,18 +79,23 @@ define('app/controllers/rules', [
                     data: JSON.stringify(payload),
                     success: function(data) {
                         info('Successfully created rule ', data.id);
-                        rule.set('id', data.id);
-                        rule.set('pendingAction', false);
-                        rule.set('maxValue', data.max_value);
-                        $('#new').attr('id', data.id);
-                        $('#add-rule-button').button('enable');
+                        that.set('creationPending', false);
+                        var rule = Rule.create({
+                            'id': data.id,
+                            'value': value,
+                            'metric': metric,
+                            'machine': machine,
+                            'operator': operator,
+                            'maxValue': data.max_value,
+                            'actionToTake': actionToTake,
+                        });
+                        that.pushObject(rule);
+                        that.redrawRules();
                     },
                     error: function(jqXHR, textstate, errorThrown) {
                         Mist.notificationController.notify('Error while creating rule');
                         error(textstate, errorThrown, 'while creating rule');
-                        that.removeObject(rule);
-                        that.redrawRules();
-                        $('#add-rule-button').button('enable');
+                        that.set('creationPending', false);
                     }
                 });
             },
@@ -190,20 +189,20 @@ define('app/controllers/rules', [
             },
 
             handleRuleSliders: function() {
-                function sliderShowHandler(event) {
+                function showSlider(event) {
                     $(event.currentTarget).addClass('open');
                     $(event.currentTarget).find('.ui-slider-track').fadeIn();
                 }
-                function sliderHideHandler(event) {
+                function hideSlider(event) {
                     $(event.currentTarget).find('.ui-slider-track').fadeOut();
                     $(event.currentTarget).find('.ui-slider').removeClass('open');
                     Mist.rulesController.changeRuleValue(event);
                 }
-                $('.ui-slider').on('tap', sliderShowHandler);
-                $('.ui-slider').on('click', sliderShowHandler);
-                $('.ui-slider').on('mouseover', sliderShowHandler);
-                $('#single-machine').on('tap', sliderHideHandler);
-                $('.rule-box').on('mouseleave', sliderHideHandler);
+                $('.ui-slider').on('tap', showSlider);
+                $('.ui-slider').on('click', showSlider);
+                $('.ui-slider').on('mouseover', showSlider);
+                $('#single-machine').on('tap', hideSlider);
+                $('.rule-box').on('mouseleave', hideSlider);
             },
 
             unhandleRuleSliders: function() {

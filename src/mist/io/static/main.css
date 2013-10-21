@@ -937,6 +937,13 @@ div.loading-monitoring {
     margin-left: 85px;
 }
 
+#creation-rule .ajax-loader {
+    margin-top: 0 !important;
+    float: none !important;
+    position: relative;
+    left: 43%;
+}
+
 #machine-basic-table, #machine-metadata {
     border-collapse:collapse;
     width: 100%;
@@ -1725,6 +1732,13 @@ div.info {
     #machines .ui-listview-filter-inset, #keys .ui-listview-filter-inset {
         margin: -52px 80px 0;
     }
+    
+    #creation-rule .ajax-loader {
+        margin-top: 0 !important;
+        float: none !important;
+        position: relative;
+        left: 41%;
+    }
 }
 
 /* Conditional for < 480px */
@@ -1784,5 +1798,12 @@ div.info {
 
     #shell-return {
         overflow-x: scroll;
+    }
+    
+    #creation-rule .ajax-loader {
+        margin-top: 0 !important;
+        float: none !important;
+        position: relative;
+        left: 31%;
     }
 }

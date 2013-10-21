@@ -75,8 +75,10 @@ define('app/controllers/machines', [
                                 if (rule.backend_id == that.backend.id) {
                                     rule.set('machine', Mist.backendsController.getMachineById(rule.backend_id,
                                                                                                rule.machine_id));
-                                    rule.backend_id = '';
-                                    rule.machine_id = '';
+                                    if (rule.machine) {
+                                        rule.backend_id = '';
+                                        rule.machine_id = '';
+                                    }
                                 }
                             }
                         });
