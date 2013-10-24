@@ -534,6 +534,7 @@ def create_machine(request):
                              ex_ssh_key_ids=[str(key.id)],
                              location=location,
                              ssh_key=tmp_key_path,
+                             private_networking=True,
                              deploy=deploy_script)
             associate_key(request, key_id, backend_id, node.id, deploy=False)
         except Exception as e:
