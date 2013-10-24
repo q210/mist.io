@@ -261,7 +261,7 @@ def connect(request, backend_id=False):
     elif backend['provider'] == Provider.RACKSPACE:
         conn = driver(backend['apikey'], backend['apisecret'],
                       datacenter=backend['region'])
-    elif backend['provider'] == Provider.NEPHOSCALE:
+    elif backend['provider'] in [Provider.NEPHOSCALE, Provider.DIGITAL_OCEAN]:
         conn = driver(backend['apikey'], backend['apisecret'])
     else:
         # ec2

@@ -77,6 +77,10 @@ SUPPORTED_PROVIDERS = [
                        {'title': 'NephoScale',
                         'provider' : Provider.NEPHOSCALE},
 
+                       # DigitalOcean
+                       {'title': 'DigitalOcean',
+                        'provider' : Provider.DIGITAL_OCEAN},
+
                        # Linode
                        {'title': 'Linode',
                         'provider' : Provider.LINODE},

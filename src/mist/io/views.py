@@ -513,6 +513,36 @@ def create_machine(request):
             os.remove(tmp_key_path)
         except:
             pass            
+    elif conn.type is Provider.DIGITAL_OCEAN and public_key:
+        key = str(public_key).replace('\n','')
+        deploy_script = ScriptDeployment(script)        
+        
+        (tmp_key, tmp_key_path) = tempfile.mkstemp()
+        key_fd = os.fdopen(tmp_key, 'w+b')
+        key_fd.write(private_key)
+        key_fd.close()
+
+        try:
+            key = conn.ex_create_ssh_key(machine_name, key)
+        except:
+            key = conn.ex_create_ssh_key('mist.io', key)
+
+        try:
+            node = conn.deploy_node(name=machine_name,
+                             image=image,
+                             size=size,
+                             ex_ssh_key_ids=[str(key.id)],
+                             location=location,
+                             ssh_key=tmp_key_path,
+                             deploy=deploy_script)
+            associate_key(request, key_id, backend_id, node.id, deploy=False)
+        except Exception as e:
+            return Response('Failed to create machine in DigitalOcean: %s' % e, 500)
+        #remove temp file with private key
+        try:
+            os.remove(tmp_key_path)
+        except:
+            pass            
     elif conn.type is Provider.LINODE and public_key and private_key:
         auth = NodeAuthSSHKey(public_key)
 

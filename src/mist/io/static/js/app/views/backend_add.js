@@ -47,6 +47,10 @@ define('app/views/backend_add', [
                     $('#ApiKeylabel').text('2. Username:');
                     $('#ApiSecretlabel').text('3. Password:');
                     $('#addBackendOpenstack').hide();
+                } else if (event.target.title.indexOf("digitalocean") !== -1) {
+                    $('#ApiKeylabel').text('2. Client ID:');
+                    $('#ApiSecretlabel').text('3. API Key:');
+                    $('#addBackendOpenstack').hide();
                 } else if (event.target.title.indexOf("openstack") != -1) {
                     $('#ApiKeylabel').text('2. Username:');
                     $('#ApiSecretlabel').text('3. Password:');
