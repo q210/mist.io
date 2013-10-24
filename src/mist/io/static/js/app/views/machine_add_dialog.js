@@ -172,7 +172,8 @@ define('app/views/machine_add_dialog', [
                     }                                         
                 } 
                 if (providerName == 'SoftLayer') {
-                    if ((machineName.length > 253)||(machineName.indexOf(' ') >= 0)) {
+                    var re = /^[0-9a-zA-Z.-]*$/;
+                    if ((machineName.length > 253)||(!(re.test(machineName)))) {              
                         Mist.notificationController.timeNotify("Server name must be an alphanumeric string, that may contain period ('.') and dash ('-') special characters.", 7000);
                         return false;
                     }
