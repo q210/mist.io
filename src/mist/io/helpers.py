@@ -291,7 +291,7 @@ def get_machine_actions(machine, backend):
     if backend.type in EC2_PROVIDERS:
         can_stop = True
 
-    if backend.type == Provider.NEPHOSCALE:
+    if backend.type in [Provider.NEPHOSCALE, Provider.DIGITAL_OCEAN]:
         can_stop = True
         can_tag = False
 
@@ -309,7 +309,7 @@ def get_machine_actions(machine, backend):
         if backend.type in EC2_PROVIDERS:
             can_stop = False
             can_start = True
-        if backend.type == Provider.NEPHOSCALE:
+        if backend.type in [Provider.NEPHOSCALE, Provider.DIGITAL_OCEAN]:
             can_stop = False
             can_start = True        
         can_reboot = False
