@@ -552,6 +552,11 @@ def create_machine(request):
                              ex_ssh_key_ids=[str(key.id)],
                              location=location,
                              ssh_key=tmp_key_path,
+                             ssh_alternate_usernames=['root']*5,
+                             #attempt to fix the Connection reset by peer exception
+                             #that is (most probably) created due to a race condition
+                             #while deploy_node establishes a connection and the 
+                             #ssh server is restarted on the created node
                              private_networking=True,
                              deploy=deploy_script)
             associate_key(request, key_id, backend_id, node.id, deploy=False)
