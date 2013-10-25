@@ -1471,12 +1471,23 @@ div.logout-placeholder, div.account-placeholder, div.support-placeholder {
 #login-dialog .ajax-loader, #edit-backend .ajax-loader, 
 #keys-wrapper .ajax-loader, #keys-container .ajax-loader, 
 #home-menu .ajax-loader, #manage-keys .ajax-loader, #images .ajax-loader,
-.bubble-container .ajax-loader {
+.bubble-container .ajax-loader, .single-view-header .ajax-loader {
     background-image: url(images/spinner.gif);
     background-position: center !important;
     background-repeat: no-repeat;
     display: none;
     height: 16px;
+}
+
+.single-view-header .ajax-loader {
+    display: inline-block;
+    float: left;
+    height: 13px !important;
+    left: 45%;
+    margin-bottom: -3px;
+    position: relative;
+    top: -16px;
+    width: 20px;
 }
 
 .bubble-container .ajax-loader {
@@ -1744,6 +1755,10 @@ div.info {
         position: relative;
         left: 41%;
     }
+    
+    .single-view-header .ajax-loader {
+        left: 41%;
+    }
 }
 
 /* Conditional for < 480px */
@@ -1810,5 +1825,9 @@ div.info {
         float: none !important;
         position: relative;
         left: 31%;
+    }
+
+    .single-view-header .ajax-loader {
+        left: 37%;
     }
 }
