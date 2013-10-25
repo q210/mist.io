@@ -684,6 +684,11 @@ div.ember-view div.ui-panel-content-wrap {
     background-image: url(images/digitalocean.png);
 }
 
+/* SoftLayer */
+#single-view-provider-icon.provider-softlayer  {
+    background-image: url(images/softlayer.png);
+}
+
 /* Linode */
 #single-view-provider-icon.provider-linode  {
     background-image: url(images/p7_sm.png);

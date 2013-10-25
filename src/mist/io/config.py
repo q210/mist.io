@@ -109,6 +109,10 @@ SUPPORTED_PROVIDERS = [
                        {'title': 'Rackspace AU',
                         'provider' : "%s:%s" % (Provider.RACKSPACE,'syd')
                         },
+                        # Softlayer
+                       {'title': 'SoftLayer',
+                        'provider' : Provider.SOFTLAYER
+                       } 
                        ]
 
 # Base AMIs
