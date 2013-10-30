@@ -93,18 +93,21 @@ SUPPORTED_PROVIDERS = [
                        {'title': 'Rackspace ORD',
                         'provider' : "%s:%s" % (Provider.RACKSPACE,'ord')
                         },
+                       {'title': 'Rackspace IAD',
+                        'provider' : "%s:%s" % (Provider.RACKSPACE,'iad')
+                        },
                        {'title': 'Rackspace LON',
                         'provider' : "%s:%s" % (Provider.RACKSPACE,'lon')
+                        },
+                       {'title': 'Rackspace AU',
+                        'provider' : "%s:%s" % (Provider.RACKSPACE,'syd')
                         },
                        {'title': 'Rackspace US (OLD)',
                         'provider' : "%s:%s" % (Provider.RACKSPACE_FIRST_GEN,'us')
                         },
                        {'title': 'Rackspace UK (OLD)',
                         'provider' : "%s:%s" % (Provider.RACKSPACE_FIRST_GEN,'uk')
-                        },
-                       {'title': 'Rackspace AU',
-                        'provider' : "%s:%s" % (Provider.RACKSPACE,'syd')
-                        },
+                        }
                        ]
 
 # Base AMIs
